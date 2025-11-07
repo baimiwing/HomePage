@@ -1,15 +1,18 @@
 import React, { useState } from 'react';
 import { Upload, FileText, Send, CheckCircle } from 'lucide-react';
+import { Navigate } from 'react-router-dom';
 
 export default function RegistrationForm() {
   const [formData, setFormData] = useState({
     nama: '',
     jurusan: '',
     nim: '',
-    kebutuhan: ''
+    kebutuhan: '',
+    email: ''
   });
   const [uploadedFile, setUploadedFile] = useState(null);
   const [submitted, setSubmitted] = useState(false);
+  const [redirect, setRedirect] = useState(false);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -32,7 +35,7 @@ export default function RegistrationForm() {
   const handleSubmit = (e) => {
     e.preventDefault();
     
-    if (!formData.nama || !formData.jurusan || !formData.nim || !formData.kebutuhan) {
+    if (!formData.nama || !formData.jurusan || !formData.nim || !formData.kebutuhan || !formData.email) {
       alert('Mohon lengkapi semua field yang wajib diisi');
       return;
     }
@@ -40,10 +43,16 @@ export default function RegistrationForm() {
     setSubmitted(true);
     setTimeout(() => {
       setSubmitted(false);
-      setFormData({ nama: '', jurusan: '', nim: '', kebutuhan: '' });
+      setFormData({ nama: '', email: '', jurusan: '', nim: '', kebutuhan: '' });
       setUploadedFile(null);
+      setRedirect(true);
     }, 3000);
   };
+
+  if (redirect) {
+    return <Navigate to="/Home" replace />;
+  }
+
 
   if (submitted) {
     return (
@@ -82,6 +91,21 @@ export default function RegistrationForm() {
                   onChange={handleInputChange}
                   className="form-input"
                   placeholder="Masukkan nama lengkap Anda"
+                />
+              </div>
+
+              <div className="form-group">
+                <label htmlFor="email" className="form-label">
+                  Email <span className="required">*</span>
+                </label>
+                <input
+                  type="text"
+                  id="email"
+                  name="email"
+                  value={formData.email}
+                  onChange={handleInputChange}
+                  className="form-input"
+                  placeholder="Contoh: Ilmu Komputer"
                 />
               </div>
 
