@@ -1,14 +1,12 @@
 import { useState, useEffect } from "react";
 import { Home, ShoppingCart, Clock, Calendar, X } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
 
-const API_URL = "http://localhost:5000/api";
 
 interface Movie {
   id: number;
   title: string;
-  year: string;
+  floor: string;
   image: string;
 }
 
@@ -63,14 +61,10 @@ function TimePickerModal({
   const checkAvailability = async () => {
     setLoading(true);
     try {
-      const response = await axios.get(
-        `${API_URL}/bookings/availability/${movie.title}/${selectedDate}`
-      );
       
       const slots = generateTimeSlots();
       const bookedTimes = response.data.bookedSlots;
 
-      // Mark unavailable slots
       const updatedSlots = slots.map(slot => {
         const slotHour = parseInt(slot.time.split(':')[0]);
         const isBooked = bookedTimes.some((booked: any) => {
@@ -111,7 +105,7 @@ function TimePickerModal({
 
     onConfirm({
       roomNumber: movie.title,
-      roomFloor: movie.year,
+      roomFloor: movie.floor,
       bookingDate: selectedDate,
       startTime: selectedStartTime,
       endTime: selectedEndTime
@@ -141,7 +135,7 @@ function TimePickerModal({
         <div className="modal-body">
           <div className="room-info">
             <h3>Ruang {movie.title}</h3>
-            <p>{movie.year}</p>
+            <p>{movie.floor}</p>
           </div>
 
 {loading ? (
@@ -247,11 +241,13 @@ function TimePickerModal({
 function MovieCard({ 
   movie, 
   onAddToCart, 
-  isInCart 
+  isInCart,
+  isBig = false
 }: { 
   movie: Movie; 
   onAddToCart: (movie: Movie) => void; 
   isInCart: boolean;
+  isBig?: boolean;
 }) {
   function onFavoriteClick() {
     if (!isInCart) {
@@ -260,7 +256,7 @@ function MovieCard({
   }
 
   return (
-    <div className="movie-card">
+    <div className={isBig ? "movie-card-big" : "movie-card"}>
       <div className="movie-image">
         <img src={`/${movie.image}`} alt={movie.title} />
         <div className="movie-overlay">
@@ -275,11 +271,12 @@ function MovieCard({
       </div>
       <div className="movie-info">
         <h3>Ruang {movie.title}</h3>
-        <p>{movie.year}</p>
+        <p>{movie.floor}</p>
       </div>
     </div>
   );
 }
+
 
 function HomePage({
   movies,
@@ -316,6 +313,7 @@ function HomePage({
                 key={movie.id}
                 onAddToCart={onAddToCart}
                 isInCart={isMovieInCart(movie.id)}
+                isBig={[0, 1].includes(movie.id)}
               />
             )
         )}
@@ -338,7 +336,6 @@ function CartPage({
       alert('Cart masih kosong');
       return;
     }
-    // Pass cart items to registration form
     navigate('/Reg', { state: { bookings: cartItems } });
   };
 
@@ -360,7 +357,7 @@ function CartPage({
               <div key={index} className="cart-item">
                 <div className="cart-item-info">
                   <h3>Ruang {item.title}</h3>
-                  <p className="cart-item-floor">{item.year}</p>
+                  <p className="cart-item-floor">{item.floor}</p>
                   {item.bookingDate && (
                     <p className="cart-item-time">
                       <Clock size={16} />
@@ -425,31 +422,33 @@ function App() {
   };
 
   const movies: Movie[] = [
-    { id: 1, title: "101", year: "Lantai 1", image: "classroom.jpg" },
-    { id: 2, title: "102", year: "Lantai 1", image: "classroom.jpg" },
-    { id: 3, title: "103", year: "Lantai 1", image: "classroom.jpg" },
-    { id: 4, title: "104", year: "Lantai 1", image: "classroom.jpg" },
-    { id: 5, title: "105", year: "Lantai 1", image: "classroom.jpg" },
-    { id: 6, title: "201", year: "Lantai 2", image: "classroom.jpg" },
-    { id: 7, title: "202", year: "Lantai 2", image: "classroom.jpg" },
-    { id: 8, title: "203", year: "Lantai 2", image: "classroom.jpg" },
-    { id: 9, title: "204", year: "Lantai 2", image: "classroom.jpg" },
-    { id: 10, title: "205", year: "Lantai 2", image: "classroom.jpg" },
-    { id: 11, title: "206", year: "Lantai 2", image: "classroom.jpg" },
-    { id: 12, title: "207", year: "Lantai 2", image: "classroom.jpg" },
-    { id: 13, title: "208", year: "Lantai 2", image: "classroom.jpg" },
-    { id: 14, title: "209", year: "Lantai 2", image: "classroom.jpg" },
-    { id: 15, title: "210", year: "Lantai 2", image: "classroom.jpg" },
-    { id: 16, title: "211", year: "Lantai 2", image: "classroom.jpg" },
-    { id: 17, title: "212", year: "Lantai 2", image: "classroom.jpg" },
-    { id: 18, title: "213", year: "Lantai 2", image: "classroom.jpg" },
-    { id: 19, title: "301", year: "Lantai 3", image: "classroom.jpg" },
-    { id: 20, title: "302", year: "Lantai 3", image: "classroom.jpg" },
-    { id: 21, title: "303", year: "Lantai 3", image: "classroom.jpg" },
-    { id: 22, title: "304", year: "Lantai 3", image: "classroom.jpg" },
-    { id: 23, title: "305", year: "Lantai 3", image: "classroom.jpg" },
-    { id: 24, title: "306", year: "Lantai 3", image: "classroom.jpg" },
-    { id: 25, title: "307", year: "Lantai 3", image: "classroom.jpg" },
+    { id: 0, title: "Auditorium RMJT Soehakso", floor: "Gedung A ruang A.106", image: "Audit-1.jpg" },
+    { id: 1, title: "Auditorium Herman Johannes", floor: "Gedung D Lt. 7", image: "Audit-7.jpg" },
+    { id: 2, title: "101", floor: "Lantai 1", image: "101.jpg" },
+    { id: 3, title: "102", floor: "Lantai 1", image: "102.jpg" },
+    { id: 4, title: "103", floor: "Lantai 1", image: "103.jpg" },
+    { id: 5, title: "104", floor: "Lantai 1", image: "104.jpg" },
+    { id: 6, title: "105", floor: "Lantai 1", image: "105.jpg" },
+    { id: 7, title: "201", floor: "Lantai 2", image: "201.jpg" },
+    { id: 8, title: "202", floor: "Lantai 2", image: "202.jpg" },
+    { id: 9, title: "203", floor: "Lantai 2", image: "203.jpg" },
+    { id: 10, title: "204", floor: "Lantai 2", image: "204.jpg" },
+    { id: 11, title: "205", floor: "Lantai 2", image: "205.jpg" },
+    { id: 12, title: "206", floor: "Lantai 2", image: "206.jpg" },
+    { id: 13, title: "207", floor: "Lantai 2", image: "207.jpg" },
+    { id: 14, title: "208", floor: "Lantai 2", image: "208.jpg" },
+    { id: 15, title: "209", floor: "Lantai 2", image: "209.jpg" },
+    { id: 16, title: "210", floor: "Lantai 2", image: "210.jpg" },
+    { id: 17, title: "211", floor: "Lantai 2", image: "211.jpg" },
+    { id: 18, title: "212", floor: "Lantai 2", image: "212.jpg" },
+    { id: 19, title: "213", floor: "Lantai 2", image: "213.jpg" },
+    { id: 20, title: "301", floor: "Lantai 3", image: "301.jpg" },
+    { id: 21, title: "302", floor: "Lantai 3", image: "302.jpg" },
+    { id: 22, title: "303", floor: "Lantai 3", image: "303.jpg" },
+    { id: 23, title: "304", floor: "Lantai 3", image: "304.jpg" },
+    { id: 24, title: "305", floor: "Lantai 3", image: "305.jpg" },
+    { id: 25, title: "306", floor: "Lantai 3", image: "306.jpg" },
+    { id: 26, title: "307", floor: "Lantai 3", image: "307.jpg" },
   ];
 
   return (
