@@ -456,7 +456,7 @@ function App() {
       <nav className="navbar">
         <div className="navbar-container">
           <div className="navbar-brand">
-            <h1 className="brand-text">Peminjaman Kelas</h1>
+            <h1 className="brand-text">The Classbro</h1>
           </div>
           <div className="navbar-buttons">
             <button
