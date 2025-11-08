@@ -105,7 +105,7 @@ export default function RegistrationForm() {
                   value={formData.email}
                   onChange={handleInputChange}
                   className="form-input"
-                  placeholder="Contoh: Ilmu Komputer"
+                  placeholder="Contoh: malvino@mail.ugm.ac.id"
                 />
               </div>
 
