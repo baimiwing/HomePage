@@ -61,7 +61,7 @@ export default function RegistrationForm() {
           <div className="success-card">
             <CheckCircle className="success-icon" />
             <h2 className="success-title">Pendaftaran Berhasil!</h2>
-            <p className="success-text">Terima kasih telah mendaftar. Data Anda telah tersimpan.</p>
+            <p className="success-text">Terima kasih telah mendaftar. Surat persetujuan akan dikirim ke email anda.</p>
           </div>
         </div>
       </>
