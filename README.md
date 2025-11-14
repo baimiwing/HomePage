@@ -1,5 +1,6 @@
 The Classbro
-personal project that have and can do:
+program for WebCraft Competiiton that held by OmahTI
+team project that have and can do:
 -login site
 -home page
 -registration form
